@@ -21,7 +21,13 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
+
+    public function calendar()
+    {
+        return $this->hasOne(Calendar::class, 'owner_id');
+    }
 
     /**
      * The attributes that should be hidden for serialization.
