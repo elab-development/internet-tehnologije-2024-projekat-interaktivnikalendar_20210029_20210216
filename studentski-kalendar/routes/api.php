@@ -1,28 +1,19 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\ActivityCategoryController;
+use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\CalendarViewController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\UserController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
-
-Route::middleware('auth:api')->get('/user', function (Request $request) {
+Route::get('/user', function (Request $request) {
     return $request->user();
-});
+})->middleware('auth:sanctum');
+
+
 
 // Automatski generisane RESTful rute
 Route::apiResource('activities', ActivityController::class);
@@ -32,10 +23,18 @@ Route::apiResource('calendar-views', CalendarViewController::class);
 Route::apiResource('notifications', NotificationController::class);
 Route::apiResource('users', UserController::class);
 
+// Ruta za testiranje
+Route::get('/greeting', function () {
+    return 'Hello World';
+});
+
 // Rute za studente
 Route::group(['middleware' => ['auth:api', 'role:student']], function () {
     Route::get('activities', [ActivityController::class, 'index']);
     Route::get('activities/{id}', [ActivityController::class, 'show']);
+    Route::post('activities', [ActivityController::class, 'store']);
+    Route::put('activities/{id}', [ActivityController::class, 'update']);
+    Route::delete('activities/{id}', [ActivityController::class, 'destroy']);
     Route::get('calendars', [CalendarController::class, 'index']);
     Route::get('calendars/{id}', [CalendarController::class, 'show']);
     Route::get('notifications', [NotificationController::class, 'index']);

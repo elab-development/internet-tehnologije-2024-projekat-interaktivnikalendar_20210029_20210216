@@ -18,8 +18,6 @@ class ActivityController extends Controller
     }
 
 
-   
-
     /**
      * Store a newly created resource in storage.
      */
@@ -42,7 +40,7 @@ class ActivityController extends Controller
         }
     }
 
-   
+
 
     /**
      * Update the specified resource in storage.
