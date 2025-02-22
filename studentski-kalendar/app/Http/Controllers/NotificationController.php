@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Notification;
+use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
 {
@@ -13,6 +14,9 @@ class NotificationController extends Controller
      */
     public function index()
     {
+        if (Auth::user()->role !== 'admin') {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
         $notifications = Notification::all();
         return response()->json($notifications);
     }
@@ -22,7 +26,18 @@ class NotificationController extends Controller
      */
     public function store(Request $request)
     {
-        $notification = Notification::create($request->all());
+        if (Auth::user()->role !== 'admin') {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+        $validatedData = $request->validate([
+            'content' => 'required|string|max:255',
+            'send_time' => 'required|date',
+            'status' => 'required|string|max:50',
+            'activity_id' => 'required|exists:activities,id',
+        ]);
+
+        $notification = Notification::create($validatedData);
+        //$notification = Notification::create($request->all());
         return response()->json($notification, 201);
     }
 
@@ -31,6 +46,9 @@ class NotificationController extends Controller
      */
     public function show($id)
     {
+        if (Auth::user()->role !== 'admin') {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
         $notification = Notification::find($id);
         if ($notification) {
             return response()->json($notification);
@@ -44,6 +62,9 @@ class NotificationController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if (Auth::user()->role !== 'admin') {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
         $notification = Notification::find($id);
         if ($notification) {
             $notification->update($request->all());
@@ -58,6 +79,9 @@ class NotificationController extends Controller
      */
     public function destroy($id)
     {
+        if (Auth::user()->role !== 'admin') {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
         $notification = Notification::find($id);
         if ($notification) {
             $notification->delete();

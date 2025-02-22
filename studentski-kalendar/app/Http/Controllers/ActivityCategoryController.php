@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\ActivityCategory;
+use Illuminate\Support\Facades\Auth;
 
 class ActivityCategoryController extends Controller
 {
@@ -13,18 +14,29 @@ class ActivityCategoryController extends Controller
      */
     public function index()
     {
+        if (Auth::user()->role !== 'admin') {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
         $categories = ActivityCategory::all();
         return response()->json($categories);
     }
 
- 
+
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        $category = ActivityCategory::create($request->all());
+        if (Auth::user()->role !== 'admin') {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        $category = ActivityCategory::create($validatedData);
+        //$category = ActivityCategory::create($request->all());
         return response()->json($category, 201);
     }
 
@@ -33,6 +45,9 @@ class ActivityCategoryController extends Controller
      */
     public function show($id)
     {
+        if (Auth::user()->role !== 'admin') {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
         $category = ActivityCategory::find($id);
         if ($category) {
             return response()->json($category);
@@ -41,12 +56,15 @@ class ActivityCategoryController extends Controller
         }
     }
 
-   
+
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
     {
+        if (Auth::user()->role !== 'admin') {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
         $category = ActivityCategory::find($id);
         if ($category) {
             $category->update($request->all());
@@ -61,6 +79,9 @@ class ActivityCategoryController extends Controller
      */
     public function destroy(string $id)
     {
+        if (Auth::user()->role !== 'admin') {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
         $category = ActivityCategory::find($id);
         if ($category) {
             $category->delete();

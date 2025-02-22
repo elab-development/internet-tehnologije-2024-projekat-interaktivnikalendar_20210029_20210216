@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Calendar;
+use Illuminate\Support\Facades\Auth;
 
 
 class CalendarController extends Controller
@@ -14,6 +15,9 @@ class CalendarController extends Controller
      */
     public function index()
     {
+        if (Auth::user()->role !== 'admin') {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
         $calendars = Calendar::all();
         return response()->json($calendars);
     }
@@ -23,7 +27,17 @@ class CalendarController extends Controller
      */
     public function store(Request $request)
     {
-        $calendar = Calendar::create($request->all());
+        if (Auth::user()->role !== 'admin') {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'owner_id' => 'required|exists:users,id',
+            'activity_view' => 'nullable|string',
+        ]);
+
+        $calendar = Calendar::create($validatedData);
+        // $calendar = Calendar::create($request->all());
         return response()->json($calendar, 201);
     }
 
@@ -32,6 +46,9 @@ class CalendarController extends Controller
      */
     public function show($id)
     {
+        if (Auth::user()->role !== 'admin') {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
         $calendar = Calendar::find($id);
         if ($calendar) {
             return response()->json($calendar);
@@ -45,6 +62,9 @@ class CalendarController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if (Auth::user()->role !== 'admin') {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
         $calendar = Calendar::find($id);
         if ($calendar) {
             $calendar->update($request->all());
@@ -59,6 +79,9 @@ class CalendarController extends Controller
      */
     public function destroy($id)
     {
+        if (Auth::user()->role !== 'admin') {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
         $calendar = Calendar::find($id);
         if ($calendar) {
             $calendar->delete();

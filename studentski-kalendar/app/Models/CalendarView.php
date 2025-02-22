@@ -14,6 +14,7 @@ class CalendarView extends Model
         'view_name',
         'date_from',
         'date_to',
+        'calendar_id', //ovo sam takodje dodala nije imalo u kodu a ima u migraciji
     ];
 
     public function calendar()

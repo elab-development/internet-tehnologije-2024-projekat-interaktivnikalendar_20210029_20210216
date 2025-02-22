@@ -35,7 +35,8 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // Rute za studente
-    Route::group(['middleware' => ['role:student']], function () {
+    // Route::group(['middleware' => ['role:student']], function () { //nece nam(greska se javila prilikom slanja zahteva serveru(500)) jer nemamo role klasu tj middleware vec samo atribut role u User modelu....
+    Route::group([], function () { //kada se ovako stavi bez middleware rola onda radi...
         Route::get('activities', [ActivityController::class, 'index']);
         Route::get('activities/{id}', [ActivityController::class, 'show']);
         Route::post('activities', [ActivityController::class, 'store']);
@@ -45,10 +46,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('calendars/{id}', [CalendarController::class, 'show']);
         Route::get('notifications', [NotificationController::class, 'index']);
         Route::get('notifications/{id}', [NotificationController::class, 'show']);
+        //dodati rute(get) za kategorije aktivnosti i kalendar view
     });
 
     // Rute za administratore
-    Route::group(['middleware' => ['role:admin']], function () {
+    // Route::group(['middleware' => ['role:admin']], function () {
+    Route::group([], function () {
+        Route::get('activities', [ActivityController::class, 'index']);
+        Route::get('activities/{id}', [ActivityController::class, 'show']); //dodala sam get rute za aktivnosti 
         Route::post('activities', [ActivityController::class, 'store']);
         Route::put('activities/{id}', [ActivityController::class, 'update']);
         Route::delete('activities/{id}', [ActivityController::class, 'destroy']);
@@ -64,5 +69,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('users', [UserController::class, 'store']);
         Route::put('users/{id}', [UserController::class, 'update']);
         Route::delete('users/{id}', [UserController::class, 'destroy']);
+        //dodati rute za kalendar view?da li adminu trebaju rute (get)?
     });
 });

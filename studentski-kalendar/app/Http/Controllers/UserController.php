@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -13,6 +15,9 @@ class UserController extends Controller
      */
     public function index()
     {
+        if (Auth::user()->role !== 'admin') {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
         $users = User::all();
         return response()->json($users);
     }
@@ -22,7 +27,19 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $user = User::create($request->all());
+        if (Auth::user()->role !== 'admin') {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8',
+            'role' => 'required|string|in:admin,student',
+        ]);
+
+        $validatedData['password'] = Hash::make($validatedData['password']);
+        $user = User::create($validatedData);
+        //$user = User::create($request->all());
         return response()->json($user, 201);
     }
 
@@ -31,6 +48,9 @@ class UserController extends Controller
      */
     public function show($id)
     {
+        if (Auth::user()->role !== 'admin') {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
         $user = User::find($id);
         if ($user) {
             return response()->json($user);
@@ -44,6 +64,9 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if (Auth::user()->role !== 'admin') {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
         $user = User::find($id);
         if ($user) {
             $user->update($request->all());
@@ -58,6 +81,9 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
+        if (Auth::user()->role !== 'admin') {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
         $user = User::find($id);
         if ($user) {
             $user->delete();

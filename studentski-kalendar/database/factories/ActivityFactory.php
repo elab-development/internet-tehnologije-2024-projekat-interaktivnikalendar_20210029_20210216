@@ -24,6 +24,7 @@ class ActivityFactory extends Factory
             'end_date' => $this->faker->dateTimeBetween($start, '+3 hours'),
             'category_id' => \App\Models\ActivityCategory::factory(),
             'calendar_id' => \App\Models\Calendar::factory(),
+            'user_id' => \App\Models\User::factory(), // Dodavanje user_id
         ];
     }
 }

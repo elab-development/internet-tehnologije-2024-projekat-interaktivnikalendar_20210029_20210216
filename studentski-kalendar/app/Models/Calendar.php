@@ -13,7 +13,7 @@ class Calendar extends Model
     protected $fillable = [
         'name',
         'owner_id',
-        'active_view',
+        'activity_view', //stajalo je active_view a trevba activity_view
     ];
 
     public function owner()

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\CalendarView;
+use Illuminate\Support\Facades\Auth;
 
 class CalendarViewController extends Controller
 {
@@ -13,6 +14,9 @@ class CalendarViewController extends Controller
      */
     public function index()
     {
+        if (Auth::user()->role !== 'admin') {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
         $views = CalendarView::all();
         return response()->json($views);
     }
@@ -22,7 +26,18 @@ class CalendarViewController extends Controller
      */
     public function store(Request $request)
     {
-        $view = CalendarView::create($request->all());
+        if (Auth::user()->role !== 'admin') {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+        $validatedData = $request->validate([
+            'view_name' => 'required|string|max:255',
+            'date_from' => 'required|date',
+            'date_to' => 'required|date|after_or_equal:date_from',
+            'calendar_id' => 'required|exists:calendars,id',
+        ]);
+
+        $view = CalendarView::create($validatedData);
+        //$view = CalendarView::create($request->all());
         return response()->json($view, 201);
     }
 
@@ -31,6 +46,9 @@ class CalendarViewController extends Controller
      */
     public function show($id)
     {
+        if (Auth::user()->role !== 'admin') {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
         $view = CalendarView::find($id);
         if ($view) {
             return response()->json($view);
@@ -44,6 +62,9 @@ class CalendarViewController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if (Auth::user()->role !== 'admin') {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
         $view = CalendarView::find($id);
         if ($view) {
             $view->update($request->all());
@@ -58,6 +79,9 @@ class CalendarViewController extends Controller
      */
     public function destroy($id)
     {
+        if (Auth::user()->role !== 'admin') {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
         $view = CalendarView::find($id);
         if ($view) {
             $view->delete();

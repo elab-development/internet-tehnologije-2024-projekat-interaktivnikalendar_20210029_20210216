@@ -23,6 +23,6 @@ class ActivitySeeder extends Seeder
         // Enable foreign key checks
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        Activity::factory()->count(10)->create();
+        Activity::factory()->count(10)->create(['user_id' => 1]);
     }
 }
