@@ -14,9 +14,7 @@ class NotificationController extends Controller
      */
     public function index()
     {
-        if (Auth::user()->role !== 'admin') {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
+       
         $notifications = Notification::all();
         return response()->json($notifications);
     }
@@ -26,9 +24,7 @@ class NotificationController extends Controller
      */
     public function store(Request $request)
     {
-        if (Auth::user()->role !== 'admin') {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
+        
         $validatedData = $request->validate([
             'content' => 'required|string|max:255',
             'send_time' => 'required|date',
@@ -46,9 +42,7 @@ class NotificationController extends Controller
      */
     public function show($id)
     {
-        if (Auth::user()->role !== 'admin') {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
+       
         $notification = Notification::find($id);
         if ($notification) {
             return response()->json($notification);
@@ -62,9 +56,7 @@ class NotificationController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (Auth::user()->role !== 'admin') {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
+       
         $notification = Notification::find($id);
         if ($notification) {
             $notification->update($request->all());
@@ -79,9 +71,6 @@ class NotificationController extends Controller
      */
     public function destroy($id)
     {
-        if (Auth::user()->role !== 'admin') {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
         $notification = Notification::find($id);
         if ($notification) {
             $notification->delete();

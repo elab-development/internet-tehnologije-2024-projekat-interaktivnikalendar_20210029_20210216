@@ -18,7 +18,7 @@ Route::get('/user', function (Request $request) {
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-Route::middleware('auth:sanctum')->group(function () {
+//Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
     // Automatski generisane RESTful rute
@@ -36,7 +36,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Rute za studente
     // Route::group(['middleware' => ['role:student']], function () { //nece nam(greska se javila prilikom slanja zahteva serveru(500)) jer nemamo role klasu tj middleware vec samo atribut role u User modelu....
-    Route::group([], function () { //kada se ovako stavi bez middleware rola onda radi...
+    Route::middleware(['auth:sanctum', 'App\Http\Middleware\CheckRole:student'])->group(function (){ //kada se ovako stavi bez middleware rola onda radi...
         Route::get('activities', [ActivityController::class, 'index']);
         Route::get('activities/{id}', [ActivityController::class, 'show']);
         Route::post('activities', [ActivityController::class, 'store']);
@@ -51,7 +51,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Rute za administratore
     // Route::group(['middleware' => ['role:admin']], function () {
-    Route::group([], function () {
+        Route::middleware(['auth:sanctum', 'App\Http\Middleware\CheckRole:admin'])->group(function () {
         Route::get('activities', [ActivityController::class, 'index']);
         Route::get('activities/{id}', [ActivityController::class, 'show']); //dodala sam get rute za aktivnosti 
         Route::post('activities', [ActivityController::class, 'store']);
@@ -71,4 +71,4 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('users/{id}', [UserController::class, 'destroy']);
         //dodati rute za kalendar view?da li adminu trebaju rute (get)?
     });
-});
+//});

@@ -14,9 +14,7 @@ class ActivityCategoryController extends Controller
      */
     public function index()
     {
-        if (Auth::user()->role !== 'admin') {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
+       
         $categories = ActivityCategory::all();
         return response()->json($categories);
     }
@@ -28,9 +26,7 @@ class ActivityCategoryController extends Controller
      */
     public function store(Request $request)
     {
-        if (Auth::user()->role !== 'admin') {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
+       
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
         ]);
@@ -45,9 +41,9 @@ class ActivityCategoryController extends Controller
      */
     public function show($id)
     {
-        if (Auth::user()->role !== 'admin') {
+        /*if (Auth::user()->role !== 'admin') {
             return response()->json(['error' => 'Unauthorized'], 403);
-        }
+        }*/
         $category = ActivityCategory::find($id);
         if ($category) {
             return response()->json($category);
@@ -62,9 +58,7 @@ class ActivityCategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        if (Auth::user()->role !== 'admin') {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
+       
         $category = ActivityCategory::find($id);
         if ($category) {
             $category->update($request->all());
@@ -79,9 +73,7 @@ class ActivityCategoryController extends Controller
      */
     public function destroy(string $id)
     {
-        if (Auth::user()->role !== 'admin') {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
+        
         $category = ActivityCategory::find($id);
         if ($category) {
             $category->delete();

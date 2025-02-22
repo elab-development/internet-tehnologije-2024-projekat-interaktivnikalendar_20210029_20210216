@@ -15,9 +15,7 @@ class CalendarController extends Controller
      */
     public function index()
     {
-        if (Auth::user()->role !== 'admin') {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
+       
         $calendars = Calendar::all();
         return response()->json($calendars);
     }
@@ -27,9 +25,7 @@ class CalendarController extends Controller
      */
     public function store(Request $request)
     {
-        if (Auth::user()->role !== 'admin') {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
+        
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'owner_id' => 'required|exists:users,id',
@@ -46,9 +42,7 @@ class CalendarController extends Controller
      */
     public function show($id)
     {
-        if (Auth::user()->role !== 'admin') {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
+        
         $calendar = Calendar::find($id);
         if ($calendar) {
             return response()->json($calendar);
@@ -62,9 +56,7 @@ class CalendarController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (Auth::user()->role !== 'admin') {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
+       
         $calendar = Calendar::find($id);
         if ($calendar) {
             $calendar->update($request->all());
@@ -79,9 +71,7 @@ class CalendarController extends Controller
      */
     public function destroy($id)
     {
-        if (Auth::user()->role !== 'admin') {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
+       
         $calendar = Calendar::find($id);
         if ($calendar) {
             $calendar->delete();
