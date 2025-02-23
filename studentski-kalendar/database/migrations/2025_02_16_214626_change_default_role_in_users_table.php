@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('role')->default('student')->change(); // podrazumevanu vrednost na 'student'
+            $table->string('role')->nullable()->change();
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('role')->default('admin')->change(); // Vraca vrednost na 'admin'
+            $table->string('role')->nullable()->change();
         });
     }
 };

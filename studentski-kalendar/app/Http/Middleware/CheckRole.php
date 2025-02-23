@@ -15,15 +15,15 @@ class CheckRole
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, string $role): Response
+    public function handle(Request $request, Closure $next, ...$roles): Response
     {
         if (!Auth::check()) {
             Log::info('User not authenticated');
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
-        if (Auth::user()->role !== $role) {
-            Log::info('User role mismatch', ['expected' => $role, 'actual' => Auth::user()->role]);
+        if (!in_array(Auth::user()->role, $roles)) {
+            Log::info('User role mismatch', ['expected' => $roles, 'actual' => Auth::user()->role]);
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
