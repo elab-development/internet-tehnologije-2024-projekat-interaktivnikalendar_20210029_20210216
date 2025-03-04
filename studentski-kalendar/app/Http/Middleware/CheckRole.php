@@ -17,7 +17,7 @@ class CheckRole
      */
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
-        if (!Auth::check()) {
+       if (!Auth::check()) {
             Log::info('User not authenticated');
             return response()->json(['error' => 'Unauthorized'], 403);
         }
@@ -29,4 +29,19 @@ class CheckRole
 
         return $next($request);
     }
-}
+
+      /* if (!Auth::check()) {
+            Log::info('User not authenticated');
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+ 
+        $user = Auth::user();
+        Log::info('Authenticated user', ['user' => $user]);
+ 
+        if ($user->role !== $role) {
+            Log::info('User role mismatch', ['expected' => $role, 'actual' => $user->role]);
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+ 
+        return $next($request);
+}*/}
