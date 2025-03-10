@@ -1,9 +1,16 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/HeroSection.css';
 import calendarImage from '../assets/calendar-image.jpeg'; // Putanja do slike kalendara
 
 const HeroSection = () => {
-  return (
+  const navigate = useNavigate();
+
+  const handleGetStarted = () => {
+    navigate('/register');
+  
+  };
+    return (
     <div className="hero-section">
       <header className="hero-header">
         <div className="logo-container">
@@ -13,7 +20,7 @@ const HeroSection = () => {
           </h1>
         </div>
         <div className="button-container">
-          <button className="hero-button">Get Started</button>
+          <button className="hero-button" onClick={handleGetStarted}>Get Started</button>
           <button className="hero-button">Login</button>
         </div>
       </header>
