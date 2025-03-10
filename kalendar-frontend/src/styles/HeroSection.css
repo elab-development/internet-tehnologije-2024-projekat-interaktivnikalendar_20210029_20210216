@@ -1,0 +1,109 @@
+
+
+:root {
+  --blue-color: #007bff;
+  --light-blue-color: #66b2ff;
+  --white-color: #FFFFFF;
+  --motto-color: #5a9bd5;
+  --dark-blue-color: #0056b3;
+}
+
+.hero-section {
+  font-family: Arial, Helvetica, sans-serif;
+  color: var(--blue-color);
+  background-color: var(--white-color);
+  padding: 20px;
+}
+
+.hero-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--blue-color);
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.app-name {
+ font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.study {
+  color: var(--blue-color);
+}
+
+.track {
+  color: var(--light-blue-color);
+}
+
+.button-container {
+  display: flex;
+  gap: 10px;
+}
+
+.hero-button {
+  background-color: var(--blue-color);
+  color: var(--white-color);
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.hero-button:hover {
+  background-color: #0056b3;
+}
+
+.hero-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 0;
+}
+
+.text-content {
+  max-width: 50%;
+  text-align: center;
+}
+
+.title {
+  font-size: 70px;
+  margin-bottom: 80px;
+  color: var(--dark-blue-color);
+  font-family:Georgia, 'Times New Roman', Times, serif;
+}
+
+.text-content .motto {
+  font-size: 30px;
+  margin-bottom: 20px;
+  color: var(--motto-color);
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+.image-content {
+  max-width: 50%;
+  position: relative;
+}
+
+.calendar-image {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.plan-schedule {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  font-size: 34px;
+  margin: 20px;
+  color: var(--dark-blue-color);
+  font-family:Georgia, 'Times New Roman', Times, serif;
+  
+}
