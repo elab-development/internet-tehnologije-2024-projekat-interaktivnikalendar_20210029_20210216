@@ -25,9 +25,10 @@ function App() {
 export default App;
 */
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import HeroSection from './pages/HeroSection';
 import Register from './pages/Register';
+import Login from './pages/Login';
 import './App.css';
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HeroSection />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
     </Router>
   );

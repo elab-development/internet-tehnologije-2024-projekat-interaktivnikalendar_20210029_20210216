@@ -10,6 +10,10 @@ const HeroSection = () => {
     navigate('/register');
   };
 
+  const handleLogin = () => {
+    navigate('/login');
+  };
+
   return (
     <div className="hero-section">
       <header className="hero-header">
@@ -21,7 +25,7 @@ const HeroSection = () => {
         </div>
         <div className="button-container">
           <button className="hero-button" onClick={handleGetStarted}>Get Started</button>
-          <button className="hero-button">Login</button>
+          <button className="hero-button" onClick={handleLogin}>Login</button>
         </div>
       </header>
       <div className="hero-content">
@@ -37,6 +41,17 @@ const HeroSection = () => {
           <img src={calendarImage} alt="Student using calendar" className="calendar-image" />
         </div>
       </div>
+      <footer className="hero-footer">
+        <div className="footer-left">
+          &copy; 2025 StudyTrack
+        </div>
+        <div className="footer-right">
+          <h3>Contact Us</h3>
+          <p>Email: studytrack@gmail.com</p>
+          <p>Address: Rankeova 5, Belgrade</p>
+          <p>Phone: +38161246444</p>
+        </div>
+      </footer>
     </div>
   );
 };
