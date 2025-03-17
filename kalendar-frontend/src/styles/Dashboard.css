@@ -1,0 +1,35 @@
+.dashboard {
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  padding: 20px;
+}
+
+.dashboard-content {
+  margin-top: 20px;
+  padding: 20px;
+  display: flex; /* Dodato za fleksibilno raspoređivanje */
+  justify-content: flex-start; /* Postavlja sadržaj na početak (levo) */
+}
+
+.dashboard-content h2 {
+  color: var(--dark-blue-color);
+}
+
+.welcome-panel {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 40px;
+  max-width: 600px;
+  margin-right: auto; /* Dodato za poravnavanje panela sa leve strane */
+  text-align: center;
+}
+
+.welcome-panel h2 {
+  margin: 0 0 20px;
+  font-size: 2.5em;
+}
+
+.welcome-panel p {
+  margin: 0;
+  font-size: 1.2em;
+}

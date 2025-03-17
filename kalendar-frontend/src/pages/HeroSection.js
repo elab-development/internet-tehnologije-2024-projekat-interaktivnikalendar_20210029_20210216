@@ -34,7 +34,8 @@ const HeroSection = () => {
           <p className="motto">Transform the way you manage your time - study efficiently, stay organized and achieve success!</p>
           <div className="description">
             <p>📚 Keep track of your classes, assignments, and exams with ease.</p>
-            <p>📅 Start Planning Smarter Today! Sign up now and take control of your academic journey.</p>
+            <p>📅 Start Planning Smarter Today! </p>
+            <p>✍️ Sign up now and take control of your academic journey.</p>
           </div>
         </div>
         <div className="image-content">

@@ -1,18 +1,48 @@
 import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; 
 import '../styles/Register.css';
 
 const Register = () => {
-    useEffect(() => {
-        document.body.classList.add('register-page');
-        return () => {
-          document.body.classList.remove('register-page');
-        };
-      }, []);
-  const handleSignUp = (e) => {
-    e.preventDefault();
-    // Handle sign up logic here
-  };
+  useEffect(() => {
+    document.body.classList.add('register-page');
+    return () => {
+      document.body.classList.remove('register-page');
+    };
+  }, []);
 
+  const navigate = useNavigate(); 
+
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+
+    const user = {
+      name: e.target.name.value,
+      email: e.target.email.value,
+      password: e.target.password.value,
+    };
+
+    try {
+      const response = await fetch('https://your-api-endpoint.com/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(user),
+      });
+
+      if (response.ok) {
+        // Handle successful registration
+        console.log('User registered successfully');
+       // navigate('/dashboard'); 
+      } else {
+        // Handle errors
+        console.error('Registration failed');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+  navigate('/dashboard'); 
   return (
     <div className="register-container">
       <h1>Sign Up</h1>
