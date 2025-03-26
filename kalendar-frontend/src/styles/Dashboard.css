@@ -1,3 +1,4 @@
+/* Globalni stilovi za Dashboard */
 .dashboard {
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   padding: 20px;
@@ -6,30 +7,124 @@
 .dashboard-content {
   margin-top: 20px;
   padding: 20px;
-  display: flex; /* Dodato za fleksibilno raspoređivanje */
-  justify-content: flex-start; /* Postavlja sadržaj na početak (levo) */
+  display: flex;
+  justify-content: space-between; /* Welcome Panel levo, Kalendar desno */
+  align-items: flex-start; /* Poravnanje elemenata na vrhu */
+  gap: 20px; /* Razmak između panela */
 }
 
 .dashboard-content h2 {
   color: var(--dark-blue-color);
 }
 
+/* Welcome Panel */
 .welcome-panel {
   background-color: #f9f9f9;
   border: 1px solid #ddd;
   border-radius: 8px;
-  padding: 40px;
-  max-width: 600px;
-  margin-right: auto; /* Dodato za poravnavanje panela sa leve strane */
+  padding: 30px;
+  max-width: 400px;
   text-align: center;
+  height: 70px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .welcome-panel h2 {
-  margin: 0 0 20px;
-  font-size: 2.5em;
+  margin: 0 0 10px;
+  font-size: 2em;
 }
 
 .welcome-panel p {
   margin: 0;
-  font-size: 1.2em;
+  font-size: 1em;
+}
+
+/* Calendar Panel */
+.calendar-panel {
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  max-width:950px; /* Proširen kalendar */
+  width: 100%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* FullCalendar */
+.fc {
+  font-family: 'Trebuchet MS', Arial, sans-serif;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.fc-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #7bb2ed;
+  color: #fff;
+  border-radius: 8px 8px 0 0;
+}
+
+.fc-toolbar {
+  display: flex;
+  justify-content: center; /* Centriranje naslova i dugmadi */
+  align-items: center;
+  padding: 10px;
+  background-color: #7bb2ed;
+  color: #fff;
+  border-radius: 8px 8px 0 0;
+}
+
+.fc-toolbar .fc-toolbar-chunk {
+  display: flex;
+  align-items: center;
+}
+
+.fc-toolbar .fc-prev-button {
+  margin-right: 10px; 
+}
+
+.fc-toolbar .fc-next-button {
+  margin-left: 10px; 
+}
+
+.fc-toolbar .fc-toolbar-title {
+  font-size: 2em;
+  font-weight: bold;
+  margin: 0; 
+}
+.fc-daygrid-day {
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.fc-daygrid-day:hover {
+  background-color: #e6f7ff;
+}
+
+.fc-day-today {
+  background-color: #d9edf7;
+  border: 1px solid #bce8f1;
+}
+
+.fc-event {
+  background-color: #3871d2;
+  color: #fff;
+  padding: 5px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  text-align: center;
+}
+
+.fc-event:hover {
+  background-color: #0056b3;
 }
