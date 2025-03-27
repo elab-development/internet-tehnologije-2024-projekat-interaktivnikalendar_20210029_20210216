@@ -1,7 +1,7 @@
 body {
-    background-image: url('./assets/background.jpg'); 
-    background-size: cover; /* Pokriva celu stranicu */
-    background-repeat: no-repeat; /* Sprečava ponavljanje slike */
-    background-attachment: fixed; /* Slika ostaje fiksirana prilikom skrolovanja */
-    background-position: center; /* Centriranje slike */
-  }
+  background-image: url('./assets/background.jpg'); 
+  background-size: cover; /* Pokriva celu stranicu */
+  background-repeat: no-repeat; /* Sprečava ponavljanje slike */
+  background-attachment: fixed; /* Slika ostaje fiksirana prilikom skrolovanja */
+  background-position: center; /* Centriranje slike */
+}

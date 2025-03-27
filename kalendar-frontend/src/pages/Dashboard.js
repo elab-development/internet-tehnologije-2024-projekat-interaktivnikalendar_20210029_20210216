@@ -1,13 +1,53 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar.js';
 import FullCalendar from '@fullcalendar/react';
-import dayGridPlugin from '@fullcalendar/daygrid'; // Mesečni prikaz
-import timeGridPlugin from '@fullcalendar/timegrid'; // Nedeljni i dnevni prikaz
-import interactionPlugin from '@fullcalendar/interaction'; // Omogućava interakcije (klik na datum)
-import '../styles/Dashboard.css'; // Vaš postojeći CSS
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import interactionPlugin from '@fullcalendar/interaction';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import '../styles/Dashboard.css';
 
 const Dashboard = () => {
-  // Hardkodirane aktivnosti za testiranje
+  const [showPopup, setShowPopup] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  const [newActivity, setNewActivity] = useState({
+    name: '',
+    description: '',
+    type: 'Exam',
+    startDate: null,
+    startTime: null,
+    endDate: null,
+    endTime: null,
+  });
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer); // Čisti interval kada se komponenta demontira
+  }, []);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewActivity({ ...newActivity, [name]: value });
+  };
+
+  const handleDateChange = (date, field) => {
+    setNewActivity({ ...newActivity, [field]: date });
+  };
+
+  const handleSave = () => {
+    console.log('New Activity:', newActivity);
+    setShowPopup(false);
+  };
+
+  const handleCancel = () => {
+    setShowPopup(false);
+  };
+
   const events = [
     { title: 'Exam: Projektovanje softvera', date: '2025-03-25' },
     { title: 'Exercise: ITEH', date: '2025-03-26' },
@@ -19,30 +59,110 @@ const Dashboard = () => {
     <div className="dashboard">
       <Navbar />
       <div className="dashboard-content">
-        {/* Panel sa leve strane */}
         <div>
           <div className="welcome-panel">
             <h2>Hello, username!</h2>
             <p>Success starts with good planning – let’s go!</p>
           </div>
+          <div className="time-panel">
+            <h3>Current Time</h3>
+            <p>{currentTime.toLocaleTimeString()}</p>
+          </div>
+          <button className="new-activity-button" onClick={() => setShowPopup(true)}>
+            + New Activity
+          </button>
         </div>
-
-        {/* Kalendar sa desne strane */}
         <div className="calendar-panel">
           <FullCalendar
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-            initialView="dayGridMonth" // Početni prikaz (mesečni)
+            initialView="dayGridMonth"
             headerToolbar={{
-              left: 'prev,next today', // Dugmad za navigaciju
-              center: 'title', // Naslov (npr. "March 2025")
-              right: 'dayGridMonth,timeGridWeek,timeGridDay', // Prikazi: mesečni, nedeljni, dnevni
+              left: 'prev,next today',
+              center: 'title',
+              right: 'dayGridMonth,timeGridWeek,timeGridDay',
             }}
-            events={events} // Događaji
-            dateClick={(info) => console.log(info.date)} // Klik na datum
-            height="540px" // Automatska visina
+            events={events}
+            dateClick={(info) => console.log(info.date)}
+            height="540px"
           />
         </div>
       </div>
+      {showPopup && (
+        <div className="popup-overlay">
+          <div className="popup">
+            <h2>New Activity</h2>
+            <div className="popup-content">
+              <label>Name</label>
+              <input
+                type="text"
+                name="name"
+                value={newActivity.name}
+                onChange={handleInputChange}
+              />
+              <label>Description</label>
+              <textarea
+                name="description"
+                value={newActivity.description}
+                onChange={handleInputChange}
+              />
+              <label>Type</label>
+              <select
+                name="type"
+                value={newActivity.type}
+                onChange={handleInputChange}
+              >
+                <option value="Exam">Exam</option>
+                <option value="Lecture">Lecture</option>
+                <option value="Exercises">Exercises</option>
+                <option value="Project">Project</option>
+              </select>
+              <label>Scheduling</label>
+              <div className="date-picker-container">
+                <div>
+                  <label>Start Date</label>
+                  <DatePicker
+                    selected={newActivity.startDate}
+                    onChange={(date) => handleDateChange(date, 'startDate')}
+                    dateFormat="yyyy-MM-dd"
+                  />
+                  <label>Start Time</label>
+                  <DatePicker
+                    selected={newActivity.startTime}
+                    onChange={(time) => handleDateChange(time, 'startTime')}
+                    showTimeSelect
+                    showTimeSelectOnly
+                    timeIntervals={15}
+                    timeCaption="Time"
+                    dateFormat="HH:mm"
+                  />
+                </div>
+                <div>
+                  <label>End Date</label>
+                  <DatePicker
+                    selected={newActivity.endDate}
+                    onChange={(date) => handleDateChange(date, 'endDate')}
+                    dateFormat="yyyy-MM-dd"
+                  />
+                  <label>End Time</label>
+                  <DatePicker
+                    selected={newActivity.endTime}
+                    onChange={(time) => handleDateChange(time, 'endTime')}
+                    showTimeSelect
+                    showTimeSelectOnly
+                    timeIntervals={15}
+                    timeCaption="Time"
+                    dateFormat="HH:mm"
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="popup-actions">
+              <button onClick={handleCancel}>Cancel</button>
+              <button onClick={handleSave}>Save</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
