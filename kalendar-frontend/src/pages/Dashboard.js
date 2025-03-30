@@ -4,8 +4,6 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
 import '../styles/Dashboard.css';
 
 const Dashboard = () => {
@@ -16,10 +14,10 @@ const Dashboard = () => {
     name: '',
     description: '',
     type: 'Exam',
-    startDate: null,
-    startTime: null,
-    endDate: null,
-    endTime: null,
+    startDate: '',
+    startTime: '',
+    endDate: '',
+    endTime: '',
   });
 
   useEffect(() => {
@@ -33,10 +31,6 @@ const Dashboard = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewActivity({ ...newActivity, [name]: value });
-  };
-
-  const handleDateChange = (date, field) => {
-    setNewActivity({ ...newActivity, [field]: date });
   };
 
   const handleSave = () => {
@@ -120,38 +114,34 @@ const Dashboard = () => {
               <div className="date-picker-container">
                 <div>
                   <label>Start Date</label>
-                  <DatePicker
-                    selected={newActivity.startDate}
-                    onChange={(date) => handleDateChange(date, 'startDate')}
-                    dateFormat="yyyy-MM-dd"
+                  <input
+                    type="date"
+                    name="startDate"
+                    value={newActivity.startDate}
+                    onChange={handleInputChange}
                   />
                   <label>Start Time</label>
-                  <DatePicker
-                    selected={newActivity.startTime}
-                    onChange={(time) => handleDateChange(time, 'startTime')}
-                    showTimeSelect
-                    showTimeSelectOnly
-                    timeIntervals={15}
-                    timeCaption="Time"
-                    dateFormat="HH:mm"
+                  <input
+                    type="time"
+                    name="startTime"
+                    value={newActivity.startTime}
+                    onChange={handleInputChange}
                   />
                 </div>
                 <div>
                   <label>End Date</label>
-                  <DatePicker
-                    selected={newActivity.endDate}
-                    onChange={(date) => handleDateChange(date, 'endDate')}
-                    dateFormat="yyyy-MM-dd"
+                  <input
+                    type="date"
+                    name="endDate"
+                    value={newActivity.endDate}
+                    onChange={handleInputChange}
                   />
                   <label>End Time</label>
-                  <DatePicker
-                    selected={newActivity.endTime}
-                    onChange={(time) => handleDateChange(time, 'endTime')}
-                    showTimeSelect
-                    showTimeSelectOnly
-                    timeIntervals={15}
-                    timeCaption="Time"
-                    dateFormat="HH:mm"
+                  <input
+                    type="time"
+                    name="endTime"
+                    value={newActivity.endTime}
+                    onChange={handleInputChange}
                   />
                 </div>
               </div>
