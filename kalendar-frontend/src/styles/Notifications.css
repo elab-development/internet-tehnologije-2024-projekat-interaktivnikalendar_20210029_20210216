@@ -7,3 +7,108 @@
     margin-top: 20px;
     padding: 20px;
   }
+  .notifications-container {
+    padding: 20px;
+    max-width: 800px;
+    margin: 50px auto;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-height: 600px;
+    overflow-y: auto;
+  }
+  
+  .notifications-container h2 {
+    text-align: center;
+    margin-bottom: 40px;
+    font-size: 1.8em;
+    color: #191590;
+  }
+  
+  .notifications-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .notification-item {
+    padding: 15px;
+    margin-bottom: 15px; /* Razmak između oblačića */
+    background-color: #fafcfe; /* Svetla pozadina za oblačić */
+    border-radius: 10px; /* Zaobljene ivice */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Blaga senka */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .notification-item:last-child {
+    border-bottom: none;
+  }
+  
+  .notification-message {
+    font-size: 1em;
+    color: #333;
+  }
+  
+  .notification-time {
+    font-size: 0.9em;
+    color: #888;
+  }
+
+  .notification-actions {
+    display: flex;
+    justify-content: flex-end; 
+    align-items: center;
+    gap: 20px; 
+  }
+
+  .notification-button {
+    background-color: #e0e0e0;
+    color: #333;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+  }
+  
+  .notification-button:hover {
+    background-color: #d6d6d6;
+  }
+
+  .notification-button.mark-as-read {
+    background-color: #4caf50;
+    color: white;
+    width: 1500%;
+  }
+  
+  .notification-button.mark-as-read:hover {
+    background-color: #45a049;
+  }
+  
+  .notification-button.snooze {
+    background-color: #ffa500;
+    color: white;
+  }
+  
+  .notification-button.snooze:hover {
+    background-color: #e59400;
+  }
+  
+  .notification-button.dismiss {
+    background-color: #e74343;
+    color: white;
+  }
+  
+  .notification-button.dismiss:hover {
+    background-color: #d32f2f;
+  }
+  .notification-item.read {
+    background-color: #e0ffe0; /* Svetlo zelena pozadina za pročitana obaveštenja */
+    color: #666; /* Svetlija boja teksta */
+  }
+  
+  .notification-item.read .notification-message {
+    text-decoration: line-through; /* Precrtavanje poruke */
+  }
+  
