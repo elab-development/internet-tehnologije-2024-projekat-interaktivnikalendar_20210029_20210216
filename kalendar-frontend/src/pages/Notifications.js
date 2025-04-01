@@ -23,8 +23,17 @@ const Notifications = () => {
   };
 
   const handleSnooze = (id) => {
-    console.log(`Notification ${id} snoozed.`);
-    // Ovde možeš dodati logiku za snooze, npr. pomeranje obaveštenja na kasnije
+    const snoozedNotification = notifications.find((notification) => notification.id === id);
+
+    if (snoozedNotification) {
+      setNotifications((prevNotifications) =>
+        prevNotifications.filter((notification) => notification.id !== id)
+      );
+
+      setTimeout(() => {
+        setNotifications((prevNotifications) => [...prevNotifications, snoozedNotification]);
+      },3600000); // 1h
+    }
   };
 
   const handleDismiss = (id) => {

@@ -280,3 +280,31 @@
   font-weight: bold;
   color: #333;
 }
+.search-bar {
+  margin: 10px 0; /* Razmak iznad i ispod */
+  display: flex;
+  justify-content: center; /* Centriranje */
+}
+
+.search-input {
+  width: 350px; /* Smanjena širina */
+  padding: 8px; /* Unutrašnji razmak */
+  border: 1px solid #ccc; /* Obrub */
+  border-radius: 4px; /* Zaobljeni uglovi */
+  font-size: 14px; /* Veličina fonta */
+}
+/* Dugme za fokus timer */
+.focus-timer-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+}
+
+.focus-timer-button:hover {
+  background-color: #218838;
+}

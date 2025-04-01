@@ -4,11 +4,13 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import { useNavigate } from 'react-router-dom';
 import '../styles/Dashboard.css';
 
-const Dashboard = () => {
+const Dashboard = ({ activities, setActivities }) => {
   const [showPopup, setShowPopup] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [searchTerm, setSearchTerm] = useState('');
 
   const [newActivity, setNewActivity] = useState({
     name: '',
@@ -20,12 +22,14 @@ const Dashboard = () => {
     endTime: '',
   });
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
 
-    return () => clearInterval(timer); // Čisti interval kada se komponenta demontira
+    return () => clearInterval(timer);
   }, []);
 
   const handleInputChange = (e) => {
@@ -34,20 +38,44 @@ const Dashboard = () => {
   };
 
   const handleSave = () => {
-    console.log('New Activity:', newActivity);
-    setShowPopup(false);
+    // Kreiranje novog događaja za kalendar
+    const newEvent = {
+      id: activities.length + 1, // Generiše novi ID
+      title: `${newActivity.type}: ${newActivity.name}`,
+      date: newActivity.startDate,
+    };
+
+    // Dodavanje nove aktivnosti u listu aktivnosti
+    const newActivityData = {
+      id: activities.length + 1,
+      name: newActivity.name,
+      type: newActivity.type,
+      startDate: newActivity.startDate,
+      startTime: newActivity.startTime,
+      endDate: newActivity.endDate,
+      endTime: newActivity.endTime,
+      description: newActivity.description,
+    };
+
+    // Ažuriranje stanja za aktivnosti i događaje
+    setActivities((prevActivities) => [...prevActivities, newActivityData]);
+
+    setShowPopup(false); // Zatvaranje popup prozora
   };
 
   const handleCancel = () => {
     setShowPopup(false);
   };
 
-  const events = [
-    { title: 'Exam: Projektovanje softvera', date: '2025-03-25' },
-    { title: 'Exercise: ITEH', date: '2025-03-26' },
-    { title: 'Project: Web Development', date: '2025-03-26' },
-    { title: 'Exam: Simulacija i simulacioni jezici', date: '2025-03-27' },
-  ];
+  const handleEventClick = (eventInfo) => {
+    navigate(`/activities/${eventInfo.event.id}`);
+  };
+
+  const filteredEvents = activities.map((activity) => ({
+    id: activity.id,
+    title: `${activity.type}: ${activity.name}`,
+    date: activity.startDate,
+  }));
 
   return (
     <div className="dashboard">
@@ -62,6 +90,18 @@ const Dashboard = () => {
             <h3>Current Time</h3>
             <p>{currentTime.toLocaleTimeString()}</p>
           </div>
+
+          {/* Polje za pretragu */}
+          <div className="search-bar">
+            <input
+              type="text"
+              placeholder="Search activities..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input"
+            />
+          </div>
+
           <button className="new-activity-button" onClick={() => setShowPopup(true)}>
             + New Activity
           </button>
@@ -75,8 +115,8 @@ const Dashboard = () => {
               center: 'title',
               right: 'dayGridMonth,timeGridWeek,timeGridDay',
             }}
-            events={events}
-            dateClick={(info) => console.log(info.date)}
+            events={filteredEvents} // Prikaz filtriranih događaja
+            eventClick={handleEventClick}
             height="540px"
           />
         </div>
