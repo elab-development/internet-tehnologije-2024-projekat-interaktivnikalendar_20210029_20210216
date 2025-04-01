@@ -107,7 +107,7 @@ const Dashboard = () => {
               >
                 <option value="Exam">Exam</option>
                 <option value="Lecture">Lecture</option>
-                <option value="Exercises">Exercises</option>
+                <option value="Exercise">Exercise</option>
                 <option value="Project">Project</option>
               </select>
               <label>Scheduling</label>
