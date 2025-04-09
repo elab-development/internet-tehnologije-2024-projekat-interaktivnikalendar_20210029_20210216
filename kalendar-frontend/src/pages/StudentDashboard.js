@@ -5,7 +5,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { useNavigate } from 'react-router-dom';
-import '../styles/Dashboard.css';
+import '../styles/StudentDashboard.css';
 
 const Dashboard = ({ activities, setActivities }) => {
   const [showPopup, setShowPopup] = useState(false);
@@ -39,11 +39,11 @@ const Dashboard = ({ activities, setActivities }) => {
 
   const handleSave = () => {
     // Kreiranje novog događaja za kalendar
-    const newEvent = {
+   /* const newEvent = {
       id: activities.length + 1, // Generiše novi ID
       title: `${newActivity.type}: ${newActivity.name}`,
       date: newActivity.startDate,
-    };
+    };*/
 
     // Dodavanje nove aktivnosti u listu aktivnosti
     const newActivityData = {

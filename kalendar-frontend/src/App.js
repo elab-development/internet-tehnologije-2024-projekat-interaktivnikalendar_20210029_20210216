@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import HeroSection from './pages/HeroSection';
 import Register from './pages/Register';
 import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
+import Dashboard from './pages/StudentDashboard';
 import Activities from './pages/Activities';
 import Notifications from './pages/Notifications';
 import Profile from './pages/Profile';
@@ -21,7 +21,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         {/* Prosleđivanje aktivnosti Dashboard komponenti */}
         <Route
-          path="/dashboard"
+          path="/student-dashboard"
           element={<Dashboard activities={activities} setActivities={setActivities} />}
         />
         {/* Prosleđivanje aktivnosti Activities komponenti */}

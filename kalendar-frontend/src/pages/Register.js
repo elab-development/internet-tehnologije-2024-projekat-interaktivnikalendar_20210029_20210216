@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';
 import '../styles/Register.css';
 
 const Register = () => {
@@ -10,7 +10,7 @@ const Register = () => {
     };
   }, []);
 
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const handleSignUp = async (e) => {
     e.preventDefault();
@@ -19,10 +19,11 @@ const Register = () => {
       name: e.target.name.value,
       email: e.target.email.value,
       password: e.target.password.value,
+      password_confirmation: e.target.password.value,
     };
 
     try {
-      const response = await fetch('https://your-api-endpoint.com/register', {
+      const response = await fetch('http://localhost:8000/api/register', { // Zameni sa URL-om svog backend-a
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -31,18 +32,21 @@ const Register = () => {
       });
 
       if (response.ok) {
-        // Handle successful registration
+        // Ako je registracija uspešna
         console.log('User registered successfully');
-       // navigate('/dashboard'); 
+        navigate('/dashboard'); // Preusmeri na Home stranicu
       } else {
-        // Handle errors
-        console.error('Registration failed');
+        // Ako je registracija neuspešna
+        const errorData = await response.json();
+        console.error('Registration failed:', errorData.message);
+        alert('Registration failed: ' + errorData.message);
       }
     } catch (error) {
       console.error('Error:', error);
+      alert(`An error occurred: ${error.message}`);
     }
   };
-  navigate('/dashboard'); 
+
   return (
     <div className="register-container">
       <h1>Sign Up</h1>
@@ -60,6 +64,15 @@ const Register = () => {
           <label htmlFor="password">Password</label>
           <input type="password" id="password" name="password" required />
         </div>
+        <div className="form-group">
+    <label htmlFor="password_confirmation">Confirm Password</label>
+    <input
+      type="password"
+      id="password_confirmation"
+      name="password_confirmation"
+      required
+    />
+  </div>
         <button type="submit">Sign Up</button>
       </form>
     </div>

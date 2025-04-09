@@ -17,15 +17,10 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    if (email === '' && password === '') {
-      navigate('/dashboard');
-      return;
-    }
-
     const user = { email, password };
 
     try {
-      const response = await fetch('https://your-api-endpoint.com/login', {
+      const response = await fetch('http://localhost:8000/api/login', { // Zameni sa URL-om svog backend-a
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -34,18 +29,27 @@ const Login = () => {
       });
 
       if (response.ok) {
-        // Handle successful login
-        console.log('User logged in successfully');
-       //navigate('/dashboard');
+        const data = await response.json();
+        console.log('User logged in successfully:', data);
+
+        // Sačuvaj token u localStorage
+        localStorage.setItem('token', data.access_token);
+
+        // Proveri ulogu korisnika i preusmeri na odgovarajući dashboard
+        if (data.user.role === 'admin') {
+          navigate('/admin-dashboard'); // Preusmeri na admin dashboard
+        } else {
+          navigate('/student-dashboard'); // Preusmeri na student dashboard
+        }
       } else {
-        // Handle errors
         console.error('Login failed');
+        alert('Invalid email or password');
       }
     } catch (error) {
       console.error('Error:', error);
+      alert('An error occurred. Please try again.');
     }
   };
-  
 
   return (
     <div className="login-container">
@@ -59,7 +63,7 @@ const Login = () => {
             name="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            //required
+            required
           />
         </div>
         <div className="form-group">
@@ -70,7 +74,7 @@ const Login = () => {
             name="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            //required
+            required
           />
         </div>
         <button type="submit">Login</button>
