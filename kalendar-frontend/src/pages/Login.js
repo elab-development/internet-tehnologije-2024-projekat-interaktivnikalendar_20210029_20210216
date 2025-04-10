@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/Login.css';
 
 const Login = () => {
+  // Dodavanje klase za stilizaciju stranice
   useEffect(() => {
     document.body.classList.add('login-page');
     return () => {
@@ -10,17 +11,20 @@ const Login = () => {
     };
   }, []);
 
+  // Stanja za email i lozinku
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
+  // Funkcija za obradu prijave
   const handleLogin = async (e) => {
     e.preventDefault();
 
     const user = { email, password };
 
     try {
-      const response = await fetch('http://localhost:8000/api/login', { // Zameni sa URL-om svog backend-a
+      // Slanje POST zahteva na backend za prijavu
+      const response = await fetch('http://localhost:8000/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -35,11 +39,26 @@ const Login = () => {
         // Sačuvaj token u localStorage
         localStorage.setItem('token', data.access_token);
 
-        // Proveri ulogu korisnika i preusmeri na odgovarajući dashboard
-        if (data.user.role === 'admin') {
-          navigate('/admin-dashboard'); // Preusmeri na admin dashboard
+        // Dohvati podatke o korisniku sa /user rute
+        const userResponse = await fetch('http://localhost:8000/api/user', {
+          headers: {
+            Authorization: `Bearer ${data.access_token}`,
+          },
+        });
+
+        if (userResponse.ok) {
+          const userData = await userResponse.json();
+          console.log('User data:', userData);
+
+          // Preusmeri na odgovarajući dashboard na osnovu uloge
+          if (userData.role === 'admin') {
+            navigate('/admin-dashboard');
+          } else {
+            navigate('/student-dashboard');
+          }
         } else {
-          navigate('/student-dashboard'); // Preusmeri na student dashboard
+          console.error('Failed to fetch user data');
+          alert('Failed to fetch user data');
         }
       } else {
         console.error('Login failed');
