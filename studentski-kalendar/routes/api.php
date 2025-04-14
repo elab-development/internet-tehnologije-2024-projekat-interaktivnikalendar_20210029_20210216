@@ -33,7 +33,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/greeting', function () {
         return 'Hello World';
     });
-
+    Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+        return $request->user();
+    });
     // Rute za studente
     // Route::group(['middleware' => ['role:student']], function () { //nece nam(greska se javila prilikom slanja zahteva serveru(500)) jer nemamo role klasu tj middleware vec samo atribut role u User modelu....
     Route::middleware(['App\Http\Middleware\CheckRole:student'])->group(function () { //kada se ovako stavi bez middleware rola onda radi...
@@ -65,6 +67,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('notifications', [NotificationController::class, 'store']);
         Route::put('notifications/{id}', [NotificationController::class, 'update']);
         Route::delete('notifications/{id}', [NotificationController::class, 'destroy']);
+        Route::get('users', [UserController::class, 'index']);
         Route::post('users', [UserController::class, 'store']);
         Route::put('users/{id}', [UserController::class, 'update']);
         Route::delete('users/{id}', [UserController::class, 'destroy']);
