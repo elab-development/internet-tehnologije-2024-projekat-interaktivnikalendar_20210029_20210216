@@ -53,8 +53,11 @@ const Login = () => {
           // Preusmeri na odgovarajući dashboard na osnovu uloge
           if (userData.role === 'admin') {
             navigate('/admin-dashboard');
-          } else {
+          } else if (userData.role === 'student') {
             navigate('/student-dashboard');
+          } else {
+            console.error('Unknown user role:', userData.role);
+            alert('Unknown user role. Please contact support.');
           }
         } else {
           console.error('Failed to fetch user data');
