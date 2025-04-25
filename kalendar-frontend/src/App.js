@@ -81,7 +81,7 @@ function App() {
         {role === 'admin' && (
           <>
             <Route path="/admin-dashboard" element={<AdminDashboard />} />
-            <Route path="/admin-notifications" element={<AdminNotifications />} />
+            <Route path="/admin-notifications" element={<AdminNotifications key={Date.now()} />} />
           </>
         )}
 
