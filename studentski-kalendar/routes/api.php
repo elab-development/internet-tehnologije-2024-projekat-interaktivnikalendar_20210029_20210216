@@ -9,7 +9,9 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Hash;
 
+// Dohvatanje prijavljenog korisnika
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
@@ -21,40 +23,54 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    // Automatski generisane RESTful rute
-    /*Route::apiResource('activities', ActivityController::class);
-    Route::apiResource('activity-categories', ActivityCategoryController::class);
-    Route::apiResource('calendars', CalendarController::class);
-    Route::apiResource('calendar-views', CalendarViewController::class);
-    Route::apiResource('notifications', NotificationController::class);
-    Route::apiResource('users', UserController::class);*/
+    // Dodata ruta za ažuriranje profila prijavljenog korisnika
+    Route::put('/user', function (Request $request) {
+        $user = $request->user();
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+            'oldPassword' => 'nullable|string',
+            'newPassword' => 'nullable|string|min:6|confirmed',
+        ]);
+
+        $user->name = $request->name;
+        $user->email = $request->email;
+
+        // Ako korisnik menja lozinku
+        if ($request->filled('oldPassword') && $request->filled('newPassword')) {
+            if (!Hash::check($request->oldPassword, $user->password)) {
+                return response()->json(['message' => 'Old password is incorrect.'], 422);
+            }
+            $user->password = Hash::make($request->newPassword);
+        }
+
+        $user->save();
+
+        return response()->json(['message' => 'Profile updated successfully.']);
+    });
 
     // Ruta za testiranje
     Route::get('/greeting', function () {
         return 'Hello World';
     });
-    Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-        return $request->user();
-    });
+
     // Rute za studente
-    // Route::group(['middleware' => ['role:student']], function () { //nece nam(greska se javila prilikom slanja zahteva serveru(500)) jer nemamo role klasu tj middleware vec samo atribut role u User modelu....
-    Route::middleware(['App\Http\Middleware\CheckRole:student'])->group(function () { //kada se ovako stavi bez middleware rola onda radi...
+    Route::middleware(['App\Http\Middleware\CheckRole:student'])->group(function () {
         Route::get('activities', [ActivityController::class, 'index']);
         Route::get('activities/{id}', [ActivityController::class, 'show']);
         Route::post('activities', [ActivityController::class, 'store']);
         Route::put('activities/{id}', [ActivityController::class, 'update']);
         Route::delete('activities/{id}', [ActivityController::class, 'destroy']);
-        Route::get('calendars/{id}', [CalendarController::class, 'show']); //student samo sme svoj kalendar da vidi?
+        Route::get('calendars/{id}', [CalendarController::class, 'show']);
         Route::get('notifications', [NotificationController::class, 'index']);
         Route::get('notifications/{id}', [NotificationController::class, 'show']);
-        //dodati rute(get) za kategorije aktivnosti i kalendar view
     });
 
     // Rute za admina
-    // Route::group(['middleware' => ['role:admin']], function () {
     Route::middleware(['App\Http\Middleware\CheckRole:admin'])->group(function () {
         Route::get('activities', [ActivityController::class, 'index']);
-        Route::get('activities/{id}', [ActivityController::class, 'show']); //dodala sam get rute za aktivnosti 
+        Route::get('activities/{id}', [ActivityController::class, 'show']);
         Route::post('activities', [ActivityController::class, 'store']);
         Route::put('activities/{id}', [ActivityController::class, 'update']);
         Route::delete('activities/{id}', [ActivityController::class, 'destroy']);
@@ -71,7 +87,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('users', [UserController::class, 'store']);
         Route::put('users/{id}', [UserController::class, 'update']);
         Route::delete('users/{id}', [UserController::class, 'destroy']);
-        //dodati rute za kalendar view?da li adminu trebaju rute (get)?
     });
 
     // Zajedničke rute za studente i administratore

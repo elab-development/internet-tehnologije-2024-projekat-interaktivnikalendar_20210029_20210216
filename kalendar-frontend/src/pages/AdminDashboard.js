@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar'; // Navbar komponenta
 import '../styles/AdminDashboard.css';
 import {
@@ -18,12 +19,35 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]); // Stanje za korisnike
   const [userStats, setUserStats] = useState({}); // Stanje za statistiku korisnika
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
-  // Dohvati korisnike i statistiku sa backend-a
   useEffect(() => {
     const fetchUsers = async () => {
       const token = localStorage.getItem('token');
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+      // Provera uloge pre fetchovanja korisnika
       try {
+        const userResponse = await fetch('http://localhost:8000/api/user', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (userResponse.ok) {
+          const userData = await userResponse.json();
+          if (userData.role !== 'admin') {
+            navigate('/student-dashboard');
+            return;
+          }
+        } else {
+          navigate('/login');
+          return;
+        }
+
+        // Ako je admin, fetchuj korisnike
         const response = await fetch('http://localhost:8000/api/users', {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -41,11 +65,13 @@ const AdminDashboard = () => {
         }
       } catch (error) {
         console.error('Error fetching users:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchUsers();
-  }, []);
+  }, [navigate]);
 
   // Funkcija za brisanje korisnika
   const handleDeleteUser = async (userId) => {
@@ -91,6 +117,10 @@ const AdminDashboard = () => {
       },
     },
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="admin-dashboard">

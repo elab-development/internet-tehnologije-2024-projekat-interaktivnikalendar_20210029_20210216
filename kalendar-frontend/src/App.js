@@ -16,6 +16,12 @@ function App() {
   const [role, setRole] = useState(null); // Stanje za ulogu korisnika
   const [loading, setLoading] = useState(true); // Da li se podaci učitavaju
 
+ const handleLogout = () => {
+    localStorage.removeItem('token');
+    setRole(null); 
+    //window.location.href = '/';
+  };
+
   // Provera uloge korisnika
   useEffect(() => {
     const fetchUserRole = async () => {
@@ -54,6 +60,8 @@ function App() {
     return <div>Loading...</div>; // Prikaz dok se uloga učitava
   }
 
+  console.log('Trenutna vrednost role:', role);
+
   return (
     <Router>
       <Routes>
@@ -69,10 +77,7 @@ function App() {
               path="/student-dashboard"
               element={<Dashboard activities={activities} setActivities={setActivities} />}
             />
-            <Route
-              path="/activities"
-              element={<Activities activities={activities} />}
-            />
+           
             <Route path="/notifications" element={<Notifications />} />
           </>
         )}
@@ -86,14 +91,23 @@ function App() {
         )}
 
         {/* Zajednička rute */}
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/profile" element={<Profile onLogout={handleLogout} />} />
         <Route
               path="/activities"
               element={<Activities activities={activities} />}
             />
 
         {/* Preusmeravanje ako korisnik pokuša da pristupi nepostojećoj ruti */}
-        <Route path="*" element={<Navigate to={role === 'admin' ? '/admin-dashboard' : '/student-dashboard'} />} />
+        <Route
+          path="*"
+          element={
+            role === 'admin'
+              ? <Navigate to="/admin-dashboard" />
+              : role === 'student'
+                ? <Navigate to="/student-dashboard" />
+                : <div>Loading...</div>
+          }
+        />
       </Routes>
     </Router>
   );

@@ -11,6 +11,7 @@ const Dashboard = ({ activities, setActivities }) => {
   const [showPopup, setShowPopup] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [searchTerm, setSearchTerm] = useState('');
+  const [studentName, setStudentName] = useState(''); // Dodato za ime studenta
 
   const [newActivity, setNewActivity] = useState({
     name: '',
@@ -29,6 +30,27 @@ const Dashboard = ({ activities, setActivities }) => {
       setCurrentTime(new Date());
     }, 1000);
 
+    // Dohvati ime studenta sa backend-a
+    const fetchStudent = async () => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        try {
+          const response = await fetch('http://localhost:8000/api/user', {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          if (response.ok) {
+            const userData = await response.json();
+            setStudentName(userData.name);
+          }
+        } catch (error) {
+          console.error('Failed to fetch student data:', error);
+        }
+      }
+    };
+    fetchStudent();
+
     return () => clearInterval(timer);
   }, []);
 
@@ -38,14 +60,6 @@ const Dashboard = ({ activities, setActivities }) => {
   };
 
   const handleSave = () => {
-    // Kreiranje novog događaja za kalendar
-   /* const newEvent = {
-      id: activities.length + 1, // Generiše novi ID
-      title: `${newActivity.type}: ${newActivity.name}`,
-      date: newActivity.startDate,
-    };*/
-
-    // Dodavanje nove aktivnosti u listu aktivnosti
     const newActivityData = {
       id: activities.length + 1,
       name: newActivity.name,
@@ -57,10 +71,8 @@ const Dashboard = ({ activities, setActivities }) => {
       description: newActivity.description,
     };
 
-    // Ažuriranje stanja za aktivnosti i događaje
     setActivities((prevActivities) => [...prevActivities, newActivityData]);
-
-    setShowPopup(false); // Zatvaranje popup prozora
+    setShowPopup(false);
   };
 
   const handleCancel = () => {
@@ -83,7 +95,7 @@ const Dashboard = ({ activities, setActivities }) => {
       <div className="dashboard-content">
         <div>
           <div className="welcome-panel">
-            <h2>Hello, username!</h2>
+            <h2>Hello, {studentName ? studentName : 'student'}!</h2>
             <p>Success starts with good planning – let’s go!</p>
           </div>
           <div className="time-panel">
@@ -115,7 +127,7 @@ const Dashboard = ({ activities, setActivities }) => {
               center: 'title',
               right: 'dayGridMonth,timeGridWeek,timeGridDay',
             }}
-            events={filteredEvents} // Prikaz filtriranih događaja
+            events={filteredEvents}
             eventClick={handleEventClick}
             height="540px"
           />
