@@ -14,8 +14,7 @@ class NotificationController extends Controller
      */
     public function index()
     {
-       
-        $notifications = Notification::all();
+        $notifications = Notification::with('user')->orderBy('created_at', 'desc')->get();
         return response()->json($notifications);
     }
 
@@ -24,13 +23,18 @@ class NotificationController extends Controller
      */
     public function store(Request $request)
     {
-        
+
         $validatedData = $request->validate([
             'content' => 'required|string|max:255',
-            'send_time' => 'required|date',
-            'status' => 'required|string|max:50',
-            'activity_id' => 'required|exists:activities,id',
+            'user_id' => 'required|exists:users,id',
+            'send_time' => 'nullable|date',
+            //'status' => 'nullable|string|max:50',
+            //'activity_id' => 'nullable|exists:activities,id',
         ]);
+
+        $validatedData['send_time'] = $validatedData['send_time'] ?? now();
+        // $validatedData['status'] = $validatedData['status'] ?? 'sent';
+        //$validatedData['activity_id'] = $validatedData['activity_id'] ?? null;
 
         $notification = Notification::create($validatedData);
         //$notification = Notification::create($request->all());
@@ -42,7 +46,7 @@ class NotificationController extends Controller
      */
     public function show($id)
     {
-       
+
         $notification = Notification::find($id);
         if ($notification) {
             return response()->json($notification);
@@ -56,7 +60,7 @@ class NotificationController extends Controller
      */
     public function update(Request $request, $id)
     {
-       
+
         $notification = Notification::find($id);
         if ($notification) {
             $notification->update($request->all());
@@ -78,5 +82,13 @@ class NotificationController extends Controller
         } else {
             return response()->json(['error' => 'Notification not found'], 404);
         }
+    }
+    public function markAsRead($id)
+    {
+        $notification = Notification::findOrFail($id);
+        $notification->read = true;
+        $notification->save();
+
+        return response()->json(['message' => 'Notification marked as read.']);
     }
 }

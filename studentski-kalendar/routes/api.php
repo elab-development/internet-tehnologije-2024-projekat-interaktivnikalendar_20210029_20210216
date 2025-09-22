@@ -82,7 +82,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('calendars/{id}', [CalendarController::class, 'destroy']);
         Route::post('notifications', [NotificationController::class, 'store']);
         Route::put('notifications/{id}', [NotificationController::class, 'update']);
-        Route::delete('notifications/{id}', [NotificationController::class, 'destroy']);
         Route::get('users', [UserController::class, 'index']);
         Route::post('users', [UserController::class, 'store']);
         Route::put('users/{id}', [UserController::class, 'update']);
@@ -99,5 +98,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('calendars/{id}', [CalendarController::class, 'show']);
         Route::get('notifications', [NotificationController::class, 'index']);
         Route::get('notifications/{id}', [NotificationController::class, 'show']);
+        Route::patch('notifications/{id}/read', [NotificationController::class, 'markAsRead']);
+        Route::delete('notifications/{id}', [NotificationController::class, 'destroy']);
     });
 });

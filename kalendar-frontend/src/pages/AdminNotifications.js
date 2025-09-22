@@ -56,7 +56,7 @@ const AdminNotifications = () => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ message, user_id: userId }),
+        body: JSON.stringify({content: message, user_id: userId }),
       });
 
       if (response.ok) {
@@ -125,7 +125,7 @@ const AdminNotifications = () => {
         <strong>
           {notification.user ? notification.user.name : 'Unknown User'}:
         </strong>{' '}
-        {notification.message}
+        {notification.content}
       </li>
     ))
   ) : (
