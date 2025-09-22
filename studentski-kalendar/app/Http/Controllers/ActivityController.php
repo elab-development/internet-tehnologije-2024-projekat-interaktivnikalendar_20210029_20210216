@@ -13,11 +13,15 @@ class ActivityController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index() //Ova metoda vraća sve aktivnosti koje pripadaju autentifikovanom korisniku.
+    public function index(Request $request) //Ova metoda vraća sve aktivnosti koje pripadaju autentifikovanom korisniku.
     {
         // $activities = Activity::all();
-      
-        $activities = Activity::where('user_id', Auth::id())->get();
+
+        if ($request->has('studentId') && Auth::user()->role === 'admin') {
+            $activities = Activity::where('user_id', $request->studentId)->get();
+        } else {
+            $activities = Activity::where('user_id', Auth::id())->get();
+        }
         return response()->json($activities);
     }
 
@@ -27,21 +31,23 @@ class ActivityController extends Controller
      */
     public function store(Request $request) //Ova metoda kreira novu aktivnost.
     {
-       /* if (Auth::user()->role !== 'student' && Auth::user()->role !== 'admin') {
+        /* if (Auth::user()->role !== 'student' && Auth::user()->role !== 'admin') {
             return response()->json(['error' => 'Unauthorized'], 403);
         }*/
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'type' => 'required|string|max:50',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
-            'category_id' => 'required|exists:activity_categories,id',
-            'calendar_id' => 'required|exists:calendars,id',
+            'start_time' => 'required',
+            'end_time' => 'required',
+            //'category_id' => 'nullable|exists:categories,id',
+            //'calendar_id' => 'nullable|exists:calendars,id',
         ]);
         //$request->merge(['user_id' => Auth::id()]);
         //$activity = Activity::create($request->all());
         $validatedData['user_id'] = Auth::id();
-
         $activity = Activity::create($validatedData);
         return response()->json($activity, 201);
     }
@@ -52,7 +58,7 @@ class ActivityController extends Controller
     public function show($id) //Ova metoda prikazuje pojedinačnu aktivnost.
     {
         //$activity = Activity::find($id);
-        
+
         $activity = Activity::where('id', $id)->where('user_id', Auth::id())->first();
         if ($activity) {
             return response()->json($activity);
@@ -69,10 +75,18 @@ class ActivityController extends Controller
     public function update(Request $request, string $id) //Ova metoda ažurira postojeću aktivnost.
     {
         // $activity = Activity::find($id);
-       
         $activity = Activity::where('id', $id)->where('user_id', Auth::id())->first();
         if ($activity) {
-            $activity->update($request->all());
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'type' => 'required|string|max:50',
+                'start_date' => 'required|date',
+                'end_date' => 'required|date|after_or_equal:start_date',
+                'start_time' => 'required',
+                'end_time' => 'required',
+            ]);
+            $activity->update($validatedData);
             return response()->json($activity);
         } else {
             return response()->json(['error' => 'Activity not found'], 404);
@@ -85,8 +99,8 @@ class ActivityController extends Controller
     public function destroy(string $id) //Ova metoda briše postojeću aktivnost.
     {
         // $activity = Activity::find($id);
-       
-       /* $activity = Activity::where('id', $id)->where('user_id', Auth::id())->first();
+
+        /* $activity = Activity::where('id', $id)->where('user_id', Auth::id())->first();
         if ($activity) {
             $activity->delete();
             return response()->json(['message' => 'Activity deleted']);
@@ -112,6 +126,5 @@ class ActivityController extends Controller
 
         Log::info('Activity deleted successfully', ['id' => $id]);
         return response()->json(['message' => 'Activity deleted successfully'], 200);
-
     }
 }

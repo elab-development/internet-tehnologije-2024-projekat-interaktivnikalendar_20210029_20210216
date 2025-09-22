@@ -37,7 +37,7 @@ class NotificationController extends Controller
         //$validatedData['activity_id'] = $validatedData['activity_id'] ?? null;
 
         $notification = Notification::create($validatedData);
-        //$notification = Notification::create($request->all());
+        $notification->load('user'); // učitaj povezani user objekat
         return response()->json($notification, 201);
     }
 

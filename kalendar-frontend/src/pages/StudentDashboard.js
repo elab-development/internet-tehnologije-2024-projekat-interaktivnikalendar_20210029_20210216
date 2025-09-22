@@ -23,6 +23,18 @@ const Dashboard = ({ activities, setActivities }) => {
     endTime: '',
   });
 
+  useEffect(() => {
+   const token = localStorage.getItem('token');
+   fetch('http://localhost:8000/api/activities', {
+    headers: { Authorization: `Bearer ${token}` },
+   })
+    .then((res) => res.json())
+    .then((data) => setActivities(data))
+    .catch((err) => console.error('Failed to fetch activities:', err));
+  }, [setActivities]);
+
+  console.log(activities);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -59,21 +71,51 @@ const Dashboard = ({ activities, setActivities }) => {
     setNewActivity({ ...newActivity, [name]: value });
   };
 
-  const handleSave = () => {
-    const newActivityData = {
-      id: activities.length + 1,
-      name: newActivity.name,
-      type: newActivity.type,
-      startDate: newActivity.startDate,
-      startTime: newActivity.startTime,
-      endDate: newActivity.endDate,
-      endTime: newActivity.endTime,
-      description: newActivity.description,
-    };
-
-    setActivities((prevActivities) => [...prevActivities, newActivityData]);
-    setShowPopup(false);
+  const handleSave = async () => {
+  const token = localStorage.getItem('token');
+  const payload = {
+    name: newActivity.name,
+    description: newActivity.description,
+    type: newActivity.type,
+    start_date: newActivity.startDate,
+    end_date: newActivity.endDate,
+    start_time: newActivity.startTime,
+    end_time: newActivity.endTime,
   };
+
+  try {
+    const response = await fetch('http://localhost:8000/api/activities', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+   if (response.ok) {
+  setShowPopup(false);
+  setNewActivity({
+    name: '',
+    description: '',
+    type: 'Exam',
+    startDate: '',
+    startTime: '',
+    endDate: '',
+    endTime: '',
+  });
+  // Povuci sve aktivnosti iz baze
+  fetch('http://localhost:8000/api/activities', {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+    .then((res) => res.json())
+    .then((data) => setActivities(data));
+} else {
+  alert('Failed to save activity!');
+}
+  } catch (err) {
+    alert('Error saving activity!');
+  }
+};
 
   const handleCancel = () => {
     setShowPopup(false);
@@ -83,11 +125,11 @@ const Dashboard = ({ activities, setActivities }) => {
     navigate(`/activities/${eventInfo.event.id}`);
   };
 
-  const filteredEvents = activities.map((activity) => ({
-    id: activity.id,
-    title: `${activity.type}: ${activity.name}`,
-    date: activity.startDate,
-  }));
+ const filteredEvents = activities.map((activity) => ({
+  id: activity.id,
+  title: activity.name ? `${activity.name} (${activity.type})` : activity.type,
+  start: activity.start_date,
+}));
 
   return (
     <div className="dashboard">
@@ -130,6 +172,7 @@ const Dashboard = ({ activities, setActivities }) => {
             events={filteredEvents}
             eventClick={handleEventClick}
             height="540px"
+            displayEventTime={false}
           />
         </div>
       </div>

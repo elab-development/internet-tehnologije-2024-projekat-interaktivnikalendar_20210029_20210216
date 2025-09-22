@@ -151,7 +151,9 @@ const AdminDashboard = () => {
                     <td>
                       <button onClick={() => handleDeleteUser(user.id)}>Delete</button>
                       <button>Update</button>
-                      <button>View Activities</button>
+                      <button onClick={() => navigate(`/activities?studentId=${user.id}`, { state: { studentName: user.name } })}>
+                           View Activities
+                      </button>
                     </td>
                   </tr>
                 ))}

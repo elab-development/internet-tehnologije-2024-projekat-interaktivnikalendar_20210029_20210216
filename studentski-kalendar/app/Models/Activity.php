@@ -17,6 +17,9 @@ class Activity extends Model
         'category_id',
         'calendar_id', //ovo sam dodala sinoc,nije bilo u kodu
         'user_id', //i ovo je dodato zbog migracije za foreign key user_id
+        'type',
+        'start_time',
+        'end_time',
     ];
 
     public function calendar()
