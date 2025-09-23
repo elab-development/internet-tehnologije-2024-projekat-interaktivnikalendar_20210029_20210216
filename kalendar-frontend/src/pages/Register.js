@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+//import { useNavigate } from 'react-router-dom';
 import '../styles/Register.css';
 
 const Register = () => {
@@ -10,7 +10,7 @@ const Register = () => {
     };
   }, []);
 
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
 
   const handleSignUp = async (e) => {
     e.preventDefault();
@@ -19,31 +19,70 @@ const Register = () => {
       name: e.target.name.value,
       email: e.target.email.value,
       password: e.target.password.value,
-      password_confirmation: e.target.password.value,
+      password_confirmation: e.target.password_confirmation.value,
     };
 
     try {
-      const response = await fetch('http://localhost:8000/api/register', { // Zameni sa URL-om svog backend-a
+      console.log('Sending registration request with data:', user);
+      
+      const response = await fetch('http://localhost:8000/api/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
         body: JSON.stringify(user),
       });
 
+      console.log('Response status:', response.status);
+      console.log('Response content-type:', response.headers.get('content-type'));
+
+      // da li je response HTML umesto JSON
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const responseText = await response.text();
+        console.error('Server returned HTML instead of JSON:', responseText);
+        alert('Server error: Backend is not responding properly. Please check if Laravel server is running on port 8000.');
+        return;
+      }
+
       if (response.ok) {
-        // Ako je registracija uspešna
-        console.log('User registered successfully');
-        navigate('/dashboard'); // Preusmeri na Home stranicu
+        const data = await response.json();
+        console.log('User registered successfully:', data);
+        
+        
+        localStorage.setItem('token', data.access_token);
+
+        
+        localStorage.setItem('user', JSON.stringify(data.user));
+
+        console.log('Token saved, redirecting to dashboard...');
+
+        
+        if (data.user && data.user.role === 'admin') {
+          window.location.href = '/admin-dashboard';
+        } else {
+          window.location.href = '/student-dashboard';
+        }
       } else {
-        // Ako je registracija neuspešna
         const errorData = await response.json();
-        console.error('Registration failed:', errorData.message);
-        alert('Registration failed: ' + errorData.message);
+        console.error('Registration failed:', errorData);
+        
+        if (errorData.errors) {
+          const errorMessages = Object.values(errorData.errors).flat().join('\n');
+          alert('Registration failed:\n' + errorMessages);
+        } else {
+          alert('Registration failed: ' + (errorData.message || 'Unknown error'));
+        }
       }
     } catch (error) {
-      console.error('Error:', error);
-      alert(`An error occurred: ${error.message}`);
+      console.error('Network or other error:', error);
+      
+      if (error.message.includes('Unexpected token')) {
+        alert('Backend server error: Please make sure Laravel server is running on http://localhost:8000');
+      } else {
+        alert(`An error occurred: ${error.message}`);
+      }
     }
   };
 

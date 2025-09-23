@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar'; // Navbar komponenta
+import Navbar from '../components/Navbar';
 import '../styles/AdminDashboard.css';
 import {
   Chart as ChartJS,
@@ -13,13 +13,15 @@ import {
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 
-// Registruj potrebne komponente za Chart.js
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const AdminDashboard = () => {
-  const [users, setUsers] = useState([]); // Stanje za korisnike
-  const [userStats, setUserStats] = useState({}); // Stanje za statistiku korisnika
+  const [users, setUsers] = useState([]);
+  const [userStats, setUserStats] = useState({});
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const usersPerPage = 5;
+  const [sortOrder, setSortOrder] = useState('asc'); // Dodato za sortiranje
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,7 +31,6 @@ const AdminDashboard = () => {
         navigate('/login');
         return;
       }
-      // Provera uloge pre fetchovanja korisnika
       try {
         const userResponse = await fetch('http://localhost:8000/api/user', {
           headers: {
@@ -46,8 +47,6 @@ const AdminDashboard = () => {
           navigate('/login');
           return;
         }
-
-        // Ako je admin, fetchuj korisnike
         const response = await fetch('http://localhost:8000/api/users', {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -73,7 +72,6 @@ const AdminDashboard = () => {
     fetchUsers();
   }, [navigate]);
 
-  // Funkcija za brisanje korisnika
   const handleDeleteUser = async (userId) => {
     const token = localStorage.getItem('token');
     try {
@@ -84,7 +82,7 @@ const AdminDashboard = () => {
         },
       });
       if (response.ok) {
-        setUsers(users.filter((user) => user.id !== userId)); // Ažuriraj stanje nakon brisanja
+        setUsers(users.filter((user) => user.id !== userId));
       } else {
         console.error('Failed to delete user');
       }
@@ -93,7 +91,51 @@ const AdminDashboard = () => {
     }
   };
 
-  // Podaci za grafikon
+  // SORTIRANJE PO IMENU PRE PAGINACIJE
+  const sortedUsers = [...users].sort((a, b) => {
+    if (sortOrder === 'asc') {
+      return a.name.localeCompare(b.name);
+    } else {
+      return b.name.localeCompare(a.name);
+    }
+  });
+  const totalPages = Math.ceil(sortedUsers.length / usersPerPage);
+  const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
+  const currentUsers = sortedUsers.slice(indexOfFirstUser, indexOfLastUser);
+
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber < 1 || pageNumber > totalPages) return;
+    setCurrentPage(pageNumber);
+  };
+
+  // Helper for modern pagination with ellipsis
+  const getPagination = () => {
+    const pages = [];
+    if (totalPages <= 5) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      if (currentPage > 2) {
+        pages.push(1);
+        if (currentPage > 3) pages.push('ellipsis-prev');
+      }
+      for (
+        let i = Math.max(2, currentPage - 1);
+        i <= Math.min(totalPages - 1, currentPage + 1);
+        i++
+      ) {
+        pages.push(i);
+      }
+      if (currentPage < totalPages - 1) {
+        if (currentPage < totalPages - 2) pages.push('ellipsis-next');
+        pages.push(totalPages);
+      }
+    }
+    return pages;
+  };
+
   const chartData = {
     labels: ['Total Users', 'Active Users'],
     datasets: [
@@ -124,13 +166,26 @@ const AdminDashboard = () => {
 
   return (
     <div className="admin-dashboard">
-      <Navbar /> {/* Navbar na vrhu stranice */}
+      <Navbar />
       <div className="admin-dashboard-container">
         <h1>Admin Dashboard</h1>
         <div className="admin-dashboard-content">
-          {/* Sekcija za upravljanje korisnicima */}
           <div className="manage-users-section">
-            <h2>Manage Users</h2>
+            {/* HEADER SA DROPDOWN SORTIRANJEM */}
+            <div className="manage-users-header">
+              <h2>Manage Users</h2>
+              <div className="sort-dropdown">
+                <label htmlFor="sortOrder" style={{ marginRight: '6px' }}>Sort:</label>
+                <select
+                  id="sortOrder"
+                  value={sortOrder}
+                  onChange={e => setSortOrder(e.target.value)}
+                >
+                  <option value="asc">A - Z</option>
+                  <option value="desc">Z - A</option>
+                </select>
+              </div>
+            </div>
             <table className="users-table">
               <thead>
                 <tr>
@@ -142,7 +197,7 @@ const AdminDashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {users.map((user) => (
+                {currentUsers.map((user) => (
                   <tr key={user.id}>
                     <td>{user.id}</td>
                     <td>{user.name}</td>
@@ -152,16 +207,62 @@ const AdminDashboard = () => {
                       <button onClick={() => handleDeleteUser(user.id)}>Delete</button>
                       <button>Update</button>
                       <button onClick={() => navigate(`/activities?studentId=${user.id}`, { state: { studentName: user.name } })}>
-                           View Activities
+                        View Activities
                       </button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+            {/* MODERN PAGINATION */}
+            <div className="pagination">
+              <button
+                onClick={() => handlePageChange(1)}
+                disabled={currentPage === 1}
+                className="arrow"
+                title="First"
+              >
+                &#171;
+              </button>
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="arrow"
+                title="Previous"
+              >
+                &#60;
+              </button>
+              {getPagination().map((item, idx) =>
+                typeof item === 'number' ? (
+                  <button
+                    key={item}
+                    onClick={() => handlePageChange(item)}
+                    className={currentPage === item ? 'active' : ''}
+                  >
+                    {item}
+                  </button>
+                ) : (
+                  <span key={item + idx} className="pagination-ellipsis">...</span>
+                )
+              )}
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="arrow"
+                title="Next"
+              >
+                &#62;
+              </button>
+              <button
+                onClick={() => handlePageChange(totalPages)}
+                disabled={currentPage === totalPages}
+                className="arrow"
+                title="Last"
+              >
+                &#187;
+              </button>
+            </div>
           </div>
-
-          {/* Sekcija za statistiku */}
           <div className="statistics-section">
             <h2>Statistics</h2>
             <Bar data={chartData} options={chartOptions} />
